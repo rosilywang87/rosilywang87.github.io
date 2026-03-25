@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rosily Jing Wang — Analytics Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --navy-mid: #2C3E6B;
+    --navy-light: #3a5080;
+    --gold: #C9973A;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5EDD6;
+    --cream: #F5F0E8;
+    --white: #FFFFFF;
+    --grey: #5A6A7A;
+    --grey-light: #EEE8DC;
+    --text: #1a1a2e;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,151,58,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,151,58,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    background: rgba(27,42,74,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,151,58,0.2);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold-light);
+    letter-spacing: 0.02em;
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold-light); }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 120px;
+    max-width: 1100px;
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 7vw, 88px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+  .hero-name span { color: var(--gold-light); }
+  .hero-title {
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+  .hero-tagline {
+    font-size: 17px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    border-left: 3px solid var(--gold);
+    padding-left: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+  .hero-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s forwards;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 4px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold-light);
+    border: 1.5px solid rgba(201,151,58,0.5);
+  }
+  .btn-outline:hover { border-color: var(--gold-light); background: rgba(201,151,58,0.08); transform: translateY(-2px); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 48px;
+    line-height: 1.2;
+  }
+  .section-title span { color: var(--gold-light); font-style: italic; }
+
+  /* ── ABOUT ── */
+  #about { background: rgba(255,255,255,0.02); border-radius: 2px; }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .about-text p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 20px;
+  }
+  .about-text p strong { color: var(--gold-light); font-weight: 600; }
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .stat-card {
+    background: rgba(201,151,58,0.08);
+    border: 1px solid rgba(201,151,58,0.2);
+    border-radius: 8px;
+    padding: 24px;
+    transition: all 0.3s;
+  }
+  .stat-card:hover {
+    background: rgba(201,151,58,0.14);
+    border-color: rgba(201,151,58,0.5);
+    transform: translateY(-3px);
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.4;
+  }
+
+  /* ── SKILLS ── */
+  #skills { }
+  .skills-intro {
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    max-width: 540px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .skill-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 20px 24px;
+    cursor: default;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+    transform-origin: bottom;
+  }
+  .skill-card:hover {
+    background: rgba(201,151,58,0.08);
+    border-color: rgba(201,151,58,0.3);
+    transform: translateX(4px);
+  }
+  .skill-card:hover::before { transform: scaleY(1); }
+  .skill-category {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .skill-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .skill-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+  }
+  .skill-bar {
+    margin-top: 12px;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 2px;
+    width: 0;
+    transition: width 1s ease 0.3s;
+  }
+  .skill-card:hover .skill-bar-fill { width: var(--level) !important; }
+
+  /* ── TIMELINE ── */
+  #experience { }
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), rgba(201,151,58,0.1));
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 56px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s ease;
+  }
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .timeline-dot {
+    position: absolute;
+    left: -38px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--navy);
+    box-shadow: 0 0 0 3px rgba(201,151,58,0.25);
+  }
+  .timeline-dot.current {
+    background: var(--gold-light);
+    box-shadow: 0 0 0 4px rgba(232,201,122,0.3), 0 0 16px rgba(201,151,58,0.4);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(232,201,122,0.3), 0 0 16px rgba(201,151,58,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(232,201,122,0.15), 0 0 24px rgba(201,151,58,0.6); }
+  }
+  .timeline-date {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .timeline-role {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .timeline-company {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+  }
+  .timeline-body {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .timeline-body p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .timeline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(201,151,58,0.12);
+    color: var(--gold-light);
+    border: 1px solid rgba(201,151,58,0.2);
+    letter-spacing: 0.05em;
+  }
+  .tag.highlight {
+    background: rgba(201,151,58,0.22);
+    border-color: rgba(201,151,58,0.45);
+  }
+
+  /* ── PROJECTS ── */
+  #projects { }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .project-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(201,151,58,0.08), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .project-card:hover {
+    border-color: rgba(201,151,58,0.4);
+    transform: translateY(-4px);
+  }
+  .project-card:hover::after { opacity: 1; }
+  .project-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .project-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .project-desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .project-link {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .project-link::after { content: '→'; transition: transform 0.2s; }
+  .project-card:hover .project-link::after { transform: translateX(4px); }
+
+  /* ── DATA VIZ SECTION ── */
+  #data-story {
+    background: rgba(255,255,255,0.02);
+  }
+  .chart-container {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+  .chart-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .chart-wrap { position: relative; height: 280px; }
+
+  /* ── PERSONAL ── */
+  #personal { }
+  .personal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .personal-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px;
+    padding: 28px;
+    transition: all 0.3s;
+  }
+  .personal-card:hover {
+    background: rgba(201,151,58,0.06);
+    border-color: rgba(201,151,58,0.2);
+  }
+  .personal-icon { font-size: 28px; margin-bottom: 14px; }
+  .personal-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .personal-text { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+  /* ── CONTACT ── */
+  #contact {
+    text-align: center;
+    padding-bottom: 120px;
+  }
+  .contact-email {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    color: var(--gold-light);
+    text-decoration: none;
+    display: block;
+    margin: 24px 0 40px;
+    transition: color 0.2s;
+  }
+  .contact-email:hover { color: var(--white); }
+  .contact-links { display: flex; justify-content: center; gap: 16px; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 24px 48px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: all 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── DIVIDER ── */
+  .gold-divider {
+    width: 48px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 2px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .about-grid, .projects-grid, .skills-grid, .personal-grid { grid-template-columns: 1fr; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span style="color:#ffffff">R</span><span style="color:var(--gold-light)">JW</span></div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-eyebrow">Analytics Engineer · Gold Coast, Australia</div>
+  <h1 class="hero-name">Rosily<br><span>Jing Wang</span></h1>
+  <div class="hero-title">I build data pipelines and tools that actually matter.</div>
+  <p class="hero-tagline">
+    6+ years turning raw data into infrastructure, insights, and products that change how organisations think and decide. KSQL pipelines, BI dashboards, and the occasional wellbeing app.
+  </p>
+  <div class="hero-links">
+    <a href="#experience" class="btn btn-primary">My Experience</a>
+    <a href="#projects" class="btn btn-outline">Projects & Builds</a>
+    <a href="https://www.linkedin.com/in/rosilyjingwang" target="_blank" class="btn btn-outline">LinkedIn</a>
+    <a href="https://withinly.net" target="_blank" class="btn btn-outline">Withinly</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="reveal">
+    <div class="section-label">Who I am</div>
+    <h2 class="section-title">Builder. Analyst. <span>Curious human.</span></h2>
+    <div class="gold-divider"></div>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>I'm an analytics engineer who gets genuinely excited about building things that matter. Over 6+ years across HR tech, hospitality, and local government, I've progressively owned more of the full data stack.</p>
+      <p>At WORK180, I <strong>own the entire data transformation layer</strong> — KSQL pipelines from scratch, views and materialised views, and the full journey from source database to reporting-ready warehouse.</p>
+      <p>I also build beyond my brief. In my own time I created <strong>Withinly</strong>, a wellbeing app, as a passion project. I use AI as a force multiplier to ship things that used to need a whole team.</p>
+      <p>I'm looking for a role where <strong>building is the job</strong>, not the exception — where my work is visible, my ideas are heard, and the data I build connects to decisions that matter.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-number">6+</div>
+        <div class="stat-label">Years in data & analytics</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">76</div>
+        <div class="stat-label">Tables in data warehouse I built from scratch</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">30</div>
+        <div class="stat-label">Metrics in client health monitor</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Teams served with self-service reporting</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA STORY -->
+<section id="data-story">
+  <div class="reveal">
+    <div class="section-label">By the numbers</div>
+    <h2 class="section-title">A career told in <span>data</span></h2>
+    <div class="gold-divider"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" class="reveal">
+    <div class="chart-container">
+      <div class="chart-title">Industries worked across</div>
+      <div class="chart-wrap">
+        <canvas id="industriesChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Tools & platforms expertise</div>
+      <div class="chart-wrap">
+        <canvas id="toolsChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">What I work with</div>
+    <h2 class="section-title">Skills & <span>Toolkit</span></h2>
+    <div class="gold-divider"></div>
+    <p class="skills-intro">Hover over each skill to see how I use it. Built over 6+ years across real projects — not just certificates.</p>
+  </div>
+  <div class="skills-grid reveal">
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Pipeline Engineering</div>
+      <div class="skill-name">KSQL</div>
+      <div class="skill-desc">Built streaming pipelines from scratch — CRM events, product activity, website behaviour</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:90%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Data Foundation</div>
+      <div class="skill-name">SQL</div>
+      <div class="skill-desc">Data modelling, views, materialised views, transformation logic across multiple warehouses</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:95%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Visualisation</div>
+      <div class="skill-name">Power BI</div>
+      <div class="skill-desc">Client-facing 30+ page DEI reports, enterprise dashboards, self-service reporting layers</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:92%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Visualisation</div>
+      <div class="skill-name">Superset</div>
+      <div class="skill-desc">Internal self-service dashboards, dataset creation, interactive reports for cross-functional teams</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:85%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Visualisation</div>
+      <div class="skill-name">Looker Studio</div>
+      <div class="skill-desc">Marketing dashboards from GA data, business health metrics, multi-source reporting</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:88%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Analytics</div>
+      <div class="skill-name">Google Analytics</div>
+      <div class="skill-desc">Web performance tracking, campaign monitoring, UTM standardisation and automation</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:80%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Modelling</div>
+      <div class="skill-name">Data Modelling</div>
+      <div class="skill-desc">Designed dimensional models, client health scoring, benchmarking logic and ROI frameworks</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:88%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Superpower</div>
+      <div class="skill-name">AI-augmented Building</div>
+      <div class="skill-desc">Use AI to ship things that used to need a team — ROI calculators, apps, interactive tools</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:95%"></div></div>
+    </div>
+    <div class="skill-card" onmouseenter="animateBar(this)">
+      <div class="skill-category">Communication</div>
+      <div class="skill-name">Data Storytelling</div>
+      <div class="skill-desc">Translating complex data into clear narratives for execs, sales teams, and external clients</div>
+      <div class="skill-bar"><div class="skill-bar-fill" style="--level:90%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE TIMELINE -->
+<section id="experience">
+  <div class="reveal">
+    <div class="section-label">Career journey</div>
+    <h2 class="section-title">Where I've <span>built things</span></h2>
+    <div class="gold-divider"></div>
+  </div>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-dot current"></div>
+      <div class="timeline-date">Dec 2021 – Present</div>
+      <div class="timeline-role">Analytics Engineer <span style="color:rgba(255,255,255,0.4);font-weight:400;font-size:16px">· formerly Senior Data Analyst</span></div>
+      <div class="timeline-company">WORK180 — HR Tech & Employer Endorsement Platform</div>
+      <div class="timeline-body">
+        <p>Built and own the entire data infrastructure for WORK180 — from streaming pipelines through to self-service reporting — serving every team in the organisation. Sole owner of the data function end-to-end: pipeline architecture, data modelling, transformation logic, and reporting.</p>
+        <p>Designed and built the data pipeline from scratch using KSQL, streaming and transforming data from CRM, product event logs, website behaviour, DEI assessments, and portal usage into a structured warehouse of 76 tables. Own all transformation logic from raw source to reporting-ready layer.</p>
+        <p>Beyond the infrastructure, I've built tools that directly changed how the business operates. One I'm particularly proud of: an <strong style="color:var(--gold-light)">employer benchmarking report</strong> I created entirely on my own initiative — no one asked for it. It compares endorsed vs non-endorsed employers across key gender equity metrics, giving sales and renewals teams concrete, data-backed evidence of the real-world impact of WORK180 endorsement. It became a core commercial tool used in pitches and renewals.</p>
+        <p>I also designed and built a <strong style="color:var(--gold-light)">client health monitor</strong> scoring every client across 30 engagement and performance metrics to forecast renewal likelihood and surface churn risk early — and an <strong style="color:var(--gold-light)">interactive ROI calculator</strong> for enterprise sales with live industry benchmarking and multi-year financial modelling.</p>
+        <div class="timeline-tags">
+          <span class="tag highlight">KSQL</span>
+          <span class="tag highlight">SQL</span>
+          <span class="tag">Power BI</span>
+          <span class="tag">Superset</span>
+          <span class="tag">Looker Studio</span>
+          <span class="tag">Data Pipelines</span>
+          <span class="tag">76 tables</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Aug – Dec 2021</div>
+      <div class="timeline-role">Business Insight and Reporting Analyst</div>
+      <div class="timeline-company">Accor</div>
+      <div class="timeline-body">
+        <p>Built corporate dashboards across departments using Power BI, Excel modelling, Power Query, Calumo, and Cognos. Integrated data from multiple source systems into combined reporting.</p>
+        <div class="timeline-tags">
+          <span class="tag">Power BI</span><span class="tag">Calumo</span><span class="tag">Cognos</span><span class="tag">Excel</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Oct 2019 – Aug 2021</div>
+      <div class="timeline-role">Data Insight and Visualisation Analyst</div>
+      <div class="timeline-company">City of Gold Coast</div>
+      <div class="timeline-body">
+        <p>Corporate reporting for finance and procurement using SAP BI, SQL, Power BI and Excel. Translated complex operational data into clear visualisations for non-technical stakeholders.</p>
+        <div class="timeline-tags">
+          <span class="tag">SAP BI</span><span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">Government</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Jun 2018 – Oct 2019</div>
+      <div class="timeline-role">Corporate Reporting Analyst</div>
+      <div class="timeline-company">AccorHotels</div>
+      <div class="timeline-body">
+        <p>Reporting and dashboards across revenue, call centre, and marketing for a portfolio of 120 hotels. Pre and post campaign analysis, executive dashboards, and KPI monitoring.</p>
+        <div class="timeline-tags">
+          <span class="tag">Tableau</span><span class="tag">Google Analytics</span><span class="tag">Calumo</span><span class="tag">120 hotels</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="reveal">
+    <div class="section-label">Things I've shipped</div>
+    <h2 class="section-title">Projects & <span>Builds</span></h2>
+    <div class="gold-divider"></div>
+  </div>
+  <div class="projects-grid reveal">
+    <a href="https://withinly.net" target="_blank" class="project-card">
+      <div class="project-icon">🌱</div>
+      <div class="project-name">Withinly</div>
+      <div class="project-desc">A wellbeing app built as a passion project in my own time. Proof that I build things because I genuinely love it — not just because someone asked me to.</div>
+      <span class="project-link">Visit Withinly</span>
+    </a>
+    <div class="project-card">
+      <div class="project-icon">📊</div>
+      <div class="project-name">WORK180 ROI Calculator</div>
+      <div class="project-desc">Interactive enterprise tool with industry benchmarking, multi-year financial modelling, and live Chart.js visualisations. Built autonomously — no brief, no request. Just spotted a need and built it.</div>
+      <span class="project-link" style="cursor:default;opacity:0.5">Internal tool</span>
+    </div>
+    <div class="project-card">
+      <div class="project-icon">🔍</div>
+      <div class="project-name">Client Health Monitor</div>
+      <div class="project-desc">30-metric scoring system to forecast renewal likelihood and surface churn risk. Joined CRM and product data streams to give customer success a real-time view of every account.</div>
+      <span class="project-link" style="cursor:default;opacity:0.5">Internal tool</span>
+    </div>
+    <div class="project-card">
+      <div class="project-icon">🏆</div>
+      <div class="project-name">Employer Benchmarking Engine</div>
+      <div class="project-desc">Built autonomously — compared endorsed vs non-endorsed employers using WORK180's dataset. Became a core sales and renewals tool to demonstrate the real-world impact of endorsement.</div>
+      <span class="project-link" style="cursor:default;opacity:0.5">Internal tool</span>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAL TOUCH -->
+<section id="personal">
+  <div class="reveal">
+    <div class="section-label">Beyond the data</div>
+    <h2 class="section-title">A little about <span>the human</span></h2>
+    <div class="gold-divider"></div>
+  </div>
+  <div class="personal-grid reveal">
+    <div class="personal-card">
+      <div class="personal-icon">🌏</div>
+      <div class="personal-title">Bilingual</div>
+      <div class="personal-text">Native Mandarin speaker, full professional English. Grew up in China, built a life in Australia. Gold Coast is home.</div>
+    </div>
+    <div class="personal-card">
+      <div class="personal-icon">🎵</div>
+      <div class="personal-title">Mum of musicians</div>
+      <div class="personal-text">My kids play piano, drums, cello, and recorder. I am their personal assistant, logistics manager, and biggest fan.</div>
+    </div>
+    <div class="personal-card">
+      <div class="personal-icon">⚡</div>
+      <div class="personal-title">Fuelled by building</div>
+      <div class="personal-text">I come alive when I'm creating something from scratch that didn't exist before. That's not a work thing — it's just who I am.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">Let's talk</div>
+    <h2 class="section-title">Ready to <span>build together?</span></h2>
+    <div class="gold-divider" style="margin:0 auto 32px"></div>
+    <p style="color:rgba(255,255,255,0.55);font-size:16px;max-width:520px;margin:0 auto 12px;line-height:1.8">
+      I'm exploring analytics engineering and data lead roles at mission-driven companies where building is the job, not the exception.
+    </p>
+    <p style="color:rgba(255,255,255,0.38);font-size:14px;margin:0 auto 40px;white-space:nowrap">
+      Based on the Gold Coast · Open to remote · Bilingual English & Mandarin
+    </p>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/rosilyjingwang" target="_blank" class="btn btn-primary">Message me on LinkedIn</a>
+      <a href="https://withinly.net" target="_blank" class="btn btn-outline">Visit Withinly</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built with curiosity · Rosily Jing Wang · Gold Coast, Australia
+</footer>
+
+<script>
+  // ── SCROLL REVEAL ──
+  const reveals = document.querySelectorAll('.reveal, .timeline-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), e.target.classList.contains('timeline-item') ? i * 120 : 0);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ── SKILL BAR ANIMATION ──
+  function animateBar(card) {
+    const fill = card.querySelector('.skill-bar-fill');
+    if (fill) {
+      const level = getComputedStyle(fill).getPropertyValue('--level').trim();
+      fill.style.width = level;
+    }
+  }
+
+  // ── CHARTS ──
+  const chartDefaults = {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1B2A4A',
+        titleColor: '#E8C97A',
+        bodyColor: 'rgba(255,255,255,0.7)',
+        padding: 12, cornerRadius: 6,
+        borderColor: 'rgba(201,151,58,0.3)', borderWidth: 1,
+      }
+    }
+  };
+
+  new Chart(document.getElementById('industriesChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['HR Tech (WORK180)', 'Hospitality (Accor)', 'Government (Gold Coast)', 'Other'],
+      datasets: [{
+        data: [45, 25, 20, 10],
+        backgroundColor: ['#C9973A', '#2C3E6B', '#3a5080', 'rgba(255,255,255,0.1)'],
+        borderColor: ['#E8C97A', '#3a5080', '#4a6090', 'rgba(255,255,255,0.2)'],
+        borderWidth: 1.5,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      cutout: '65%',
+      layout: { padding: { bottom: 8 } },
+      plugins: {
+        ...chartDefaults.plugins,
+        legend: {
+          display: true, position: 'bottom',
+          labels: { color: 'rgba(255,255,255,0.6)', font: { family: 'Jost', size: 12 }, boxWidth: 12, padding: 14 }
+        }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('toolsChart'), {
+    type: 'bar',
+    data: {
+      labels: ['SQL / KSQL', 'Power BI', 'Superset', 'Looker Studio', 'Google Analytics', 'Excel Modelling'],
+      datasets: [{
+        data: [95, 92, 85, 88, 80, 85],
+        backgroundColor: ['#C9973A', '#C9973A', '#2C3E6B', '#2C3E6B', '#3a5080', '#3a5080'],
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      indexAxis: 'y',
+      scales: {
+        x: {
+          min: 0, max: 100,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          border: { display: false },
+          ticks: { color: 'rgba(255,255,255,0.35)', font: { family: 'Jost', size: 11 }, callback: v => v + '%' }
+        },
+        y: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Jost', size: 12 } }
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
