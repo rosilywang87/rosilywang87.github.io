@@ -476,18 +476,27 @@
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px;
-    padding: 32px;
+    padding: 24px;
     margin-bottom: 24px;
+    min-width: 0;
+    overflow: hidden;
   }
   .chart-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: rgba(255,255,255,0.55);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
-  .chart-wrap { position: relative; height: 280px; }
+  .chart-wrap {
+    position: relative;
+    height: 260px;
+    width: 100%;
+  }
+  .chart-wrap canvas {
+    max-width: 100% !important;
+  }
 
   /* ── PERSONAL ── */
   #personal { }
@@ -563,12 +572,75 @@
     margin-bottom: 32px;
   }
 
+  /* ── HAMBURGER ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--gold-light);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 57px; left: 0; right: 0;
+    background: rgba(27,42,74,0.98);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,151,58,0.2);
+    z-index: 99;
+    padding: 16px 0;
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a {
+    display: block;
+    padding: 14px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.2s;
+  }
+  .mobile-menu a:hover, .mobile-menu a:active { color: var(--gold-light); padding-left: 32px; }
+
   @media (max-width: 768px) {
     nav { padding: 16px 24px; }
     .nav-links { display: none; }
-    section { padding: 80px 24px; }
+    .hamburger { display: flex; }
+    section { padding: 72px 20px; }
     .about-grid, .projects-grid, .skills-grid, .personal-grid { grid-template-columns: 1fr; }
     .about-stats { grid-template-columns: 1fr 1fr; }
+    .charts-grid { grid-template-columns: 1fr !important; }
+    .chart-wrap { height: 300px; }
+    .hero-links { flex-direction: column; align-items: flex-start; }
+    .btn { width: fit-content; }
+    .contact-location { white-space: normal !important; text-align: center; }
+    .timeline { padding-left: 20px; }
+    .timeline-dot { left: -26px; }
+    .section-title { margin-bottom: 28px; }
+    .stat-number { font-size: 32px; }
+    .tag { font-size: 10px; }
+    .hero-name { margin-bottom: 12px; }
+    .hero-tagline { font-size: 15px; }
+    .skills-intro { font-size: 14px; }
+    .project-card { padding: 24px; }
+    .personal-card { padding: 20px; }
   }
 </style>
 </head>
@@ -584,7 +656,19 @@
     <a href="#projects">Projects</a>
     <a href="#contact">Contact</a>
   </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">About</a>
+  <a href="#skills" onclick="closeMenu()">Skills</a>
+  <a href="#experience" onclick="closeMenu()">Experience</a>
+  <a href="#projects" onclick="closeMenu()">Projects</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -644,7 +728,7 @@
     <h2 class="section-title">A career told in <span>data</span></h2>
     <div class="gold-divider"></div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" class="reveal">
+  <div class="charts-grid reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
     <div class="chart-container">
       <div class="chart-title">Industries worked across</div>
       <div class="chart-wrap">
@@ -869,7 +953,7 @@
     <p style="color:rgba(255,255,255,0.55);font-size:16px;max-width:520px;margin:0 auto 12px;line-height:1.8">
       I'm exploring analytics engineering and data lead roles at mission-driven companies where building is the job, not the exception.
     </p>
-    <p style="color:rgba(255,255,255,0.38);font-size:14px;margin:0 auto 40px;white-space:nowrap">
+    <p class="contact-location" style="color:rgba(255,255,255,0.38);font-size:14px;margin:0 auto 40px;white-space:nowrap">
       Based on the Gold Coast · Open to remote · Bilingual English & Mandarin
     </p>
     <div class="contact-links">
@@ -884,6 +968,18 @@
 </footer>
 
 <script>
+  // ── HAMBURGER MENU ──
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  }
+
   // ── SCROLL REVEAL ──
   const reveals = document.querySelectorAll('.reveal, .timeline-item');
   const observer = new IntersectionObserver((entries) => {
@@ -931,14 +1027,21 @@
       }]
     },
     options: {
-      ...chartDefaults,
-      cutout: '65%',
-      layout: { padding: { bottom: 8 } },
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      layout: { padding: 8 },
       plugins: {
-        ...chartDefaults.plugins,
+        tooltip: chartDefaults.plugins.tooltip,
         legend: {
-          display: true, position: 'bottom',
-          labels: { color: 'rgba(255,255,255,0.6)', font: { family: 'Jost', size: 12 }, boxWidth: 12, padding: 14 }
+          display: true,
+          position: 'bottom',
+          labels: {
+            color: 'rgba(255,255,255,0.6)',
+            font: { family: 'Jost', size: 11 },
+            boxWidth: 10,
+            padding: 10,
+          }
         }
       }
     }
@@ -956,19 +1059,24 @@
       }]
     },
     options: {
-      ...chartDefaults,
+      responsive: true,
+      maintainAspectRatio: false,
       indexAxis: 'y',
+      plugins: {
+        tooltip: chartDefaults.plugins.tooltip,
+        legend: { display: false }
+      },
       scales: {
         x: {
           min: 0, max: 100,
           grid: { color: 'rgba(255,255,255,0.05)' },
           border: { display: false },
-          ticks: { color: 'rgba(255,255,255,0.35)', font: { family: 'Jost', size: 11 }, callback: v => v + '%' }
+          ticks: { color: 'rgba(255,255,255,0.35)', font: { family: 'Jost', size: 10 }, callback: v => v + '%' }
         },
         y: {
           grid: { display: false },
           border: { display: false },
-          ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Jost', size: 12 } }
+          ticks: { color: 'rgba(255,255,255,0.6)', font: { family: 'Jost', size: 11 } }
         }
       }
     }
